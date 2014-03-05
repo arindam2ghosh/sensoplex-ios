@@ -25,6 +25,7 @@
 
 + (SSPacketLogger*) packetLogger;
 
-- (void) logPacket:(NSString *)packet;
+- (void) logPacket:(NSData *)packet;
+- (void) closeLogFile;
 
 @end

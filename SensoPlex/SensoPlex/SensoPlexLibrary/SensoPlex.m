@@ -315,9 +315,12 @@
         
         Log(@"* Starting Data Capture...");
         
+        [UIApplication sharedApplication].idleTimerDisabled = YES;
+        
+        /* Changed the prototype to log binary data
         if ( self.logBLEPackets ) {
             [[SSPacketLogger packetLogger] logPacket:@"******* NEW DATA CAPTURE *********"];
-        }
+        }*/
         
         // clear any sensor data that we may have accumulated from a
         // previous capture session
@@ -352,6 +355,9 @@
         }
         
         Log(@"* Stopping Data Capture...");
+        [UIApplication sharedApplication].idleTimerDisabled = NO;
+
+        
         Byte bytes[2] = {(Byte)BLE_CMD_STREAMENABLE, 0x0};
         NSData *cmdData = [NSData dataWithBytes:&bytes length:2];
         [self.blePeripheral writeValue:cmdData forCharacteristic:self.writeCharacteristic type:CBCharacteristicWriteWithResponse];
@@ -363,6 +369,10 @@
     @catch (NSException *exception) {
         LogError(@"Error trying to stop data capture.  %@", exception.description);
         return NO;
+    }
+    @finally {
+        //NSLog(@"CLOSING LOG FILE");
+        [[SSPacketLogger packetLogger] closeLogFile];
     }
 }
 
@@ -556,7 +566,7 @@
             // check to see if we have data to parse
             if ( self.packetDataToParse.length ) {
                 // let's parse this data
-                [self parsePacketData:self.packetDataToParse];
+                //[self parsePacketData:self.packetDataToParse];
                 
                 // then clear the data just parsed
                 [self.packetDataToParse setLength:0];
@@ -593,26 +603,6 @@
     }
 }
 
-// parse our received data
--(void) parseReceivedData {
-    BOOL locked = NO;
-    @try {
-        // acquire our packet lock so that we don't step on any processing going on
-        [self.packetDataLock lock];
-        locked = YES;
-        
-        // parse our packet data
-        [self parsePacketData:self.packetDataToParse];
-    }
-    @catch (NSException *exception) {
-        LogError(@"Error trying to parse received data.  %@", exception.description);
-    } @finally {
-        if ( locked ) {
-            [self.packetDataLock unlock];
-            locked = NO;
-        }
-    }
-}
 
 // parse specified packet data
 - (void) parsePacketData:(NSMutableData*)packetData {
@@ -666,6 +656,7 @@
     if ( !self.sensorData )
         self.sensorData = [[NSMutableArray alloc] init];
     
+    // Do not store the parsed packet
     [self.sensorData addObject:data];
     
     // if we have a delegate monitoring the sensor data, then send this to them
@@ -1051,8 +1042,9 @@
     }
     
     if ( self.logBLEPackets ) {
-        NSString *msg = [NSString stringWithFormat:@"* Received: %@", newData];
-        [[SSPacketLogger packetLogger] logPacket:msg];
+        // NSString *msg = [NSString stringWithFormat:@"* Received: %@", newData];
+        // [[SSPacketLogger packetLogger] logPacket:msg];
+        [[SSPacketLogger packetLogger] logPacket:newData];
     }
     
     // add the data on to what we already have

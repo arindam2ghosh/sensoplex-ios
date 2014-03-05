@@ -9,7 +9,7 @@
 #import "MoConstants.h"
 
 // max file size before clipping
-#define MAX_LOG_FILE_SIZE 1024000
+#define MAX_LOG_FILE_SIZE 5024000
 
 // This is a singleton class, see below
 static MoLogger* sharedLogger = nil;
@@ -143,6 +143,7 @@ void Log ( NSString *format, ... ) {
 - (void) openLogFileIfNeeded {
     if ( !fileHandle ) {
         
+        //NSLog(@"OPEN FILE");
         //Get the file path
         NSString *fileName = [self logFileLocation];
         
@@ -154,14 +155,14 @@ void Log ( NSString *format, ... ) {
         NSFileHandle *file = [NSFileHandle fileHandleForUpdatingAtPath:fileName];
         unsigned long long fileSize = [file seekToEndOfFile];
         
-        // clear the file if it gets too big
+        /* clear the file if it gets too big
         if ( fileSize > [self maxFileSize] ) {
             [file truncateFileAtOffset:0];
-        }
+        }*/
         
         self.fileHandle = file;
         
-        [self log:@"\n\n********* NEW LOG INSTANCE **********\n"];
+       // [self log:@"\n\n********* NEW LOG INSTANCE **********\n"];
         
         // add the app version to this, as well as other OS information
         UIDevice *device = [UIDevice currentDevice];

@@ -139,7 +139,7 @@
     [self.sensoPlex stopScanningForBLEPeripherals];
     
     // make sure we stop capturing data as well
-    [self.sensoPlex stopCapturingData];
+    //[self.sensoPlex stopCapturingData];
     
     self.isDisplaying = NO;
     
@@ -533,11 +533,13 @@
 - (void) onSensorData:(SensorData*) sensorData {
     
     dispatch_async(dispatch_get_main_queue(), ^{
+        
         BOOL showDebugSensorInfo = YES;
         
         // every so often, show the data as well as the number of measurements
         int dataCount = self.sensoPlex.sensorData.count;
         if ( dataCount > 0 && dataCount % kUIPacketRefreshPeriod == 0 ) {
+            
             if ( showDebugSensorInfo ) {
                 
                 NSString *debugStr = [NSString stringWithFormat:@"%i Measurements\nA: (%0.2lf,%0.2lf,%0.2lf)\nG: (%0.2lf,%0.2lf,%0.2lf)\nTemp: %0.2f°C, Battery: %0.1fV",

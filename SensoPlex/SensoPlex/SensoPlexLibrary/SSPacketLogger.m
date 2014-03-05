@@ -56,12 +56,21 @@ static SSPacketLogger* sharedPacketLogger = nil;
 
 // get the log file's filename/path
 - (NSString*) logFileLocation {
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd-HH-mm-ss"];
+    
+    NSDate *date = [[NSDate alloc] init];
+    NSString *formattedDateString = [dateFormatter stringFromDate:date];
+    //NSLog(@"formattedDateString: %@", formattedDateString);
+    
+    NSString *basefilename = [NSString stringWithFormat:@"packets-%@.log", formattedDateString];
+    
     NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains (NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    NSString *fileName = [documentsDirectory stringByAppendingPathComponent:@"packets.rtf"];
+    NSString *fileName = [documentsDirectory stringByAppendingPathComponent:basefilename];
     return fileName;
 }
 
-- (void) logPacket:(NSString *)packet {
+- (void) logPacket:(NSData *)packet {
     BOOL locked = NO;
     @try {
         // open the file handle if needed (if this is our first)
@@ -71,9 +80,17 @@ static SSPacketLogger* sharedPacketLogger = nil;
         locked = YES;
         
         // append text to file (add a newline every write)
-        NSString *contentToWrite = [NSString stringWithFormat:@"%@\n",
-                                    packet];
-        [fileHandle writeData:[contentToWrite dataUsingEncoding:NSUTF8StringEncoding]];
+        //NSString *contentToWrite = [NSString stringWithFormat:@"%@\n",
+                                //packet];
+        
+        int l = packet.length;
+        NSData *dataLength = [NSData dataWithBytes:&l
+                                            length:sizeof(l)];
+        //NSLog(@"Logging packet to file: %i", l);
+        
+        [self.fileHandle seekToEndOfFile];
+        [self.fileHandle writeData:dataLength];
+        [self.fileHandle writeData:packet];
     }
     @catch (NSException *exception) {
         
@@ -82,6 +99,14 @@ static SSPacketLogger* sharedPacketLogger = nil;
             [self.packetLock unlock];
         }
     }
+}
+
+
+// close the log file
+- (void) closeLogFile {
+    //NSLog(@"Close PACKET LOG FILE");
+    [self.fileHandle closeFile];
+    self.fileHandle = nil;
 }
 
 

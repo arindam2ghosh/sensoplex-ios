@@ -113,9 +113,11 @@ static Byte RxPacket[RXPKTSIZE];
                         //  than the iOS frameworks allow
                         self.checkSumErrorCount = self.checkSumErrorCount + 1;
                         LogError(@"Checksum error for packet!  %i.  %i checksum errors", chksum, self.checkSumErrorCount);
+                        
+                        /*
                         if ( self.logPackets ) {
                             [[SSPacketLogger packetLogger] logPacket:[NSString stringWithFormat:@"\nChecksum error!  %i.  %i checksum errors.\n", chksum, self.checkSumErrorCount]];
-                        }
+                        }*/
                     }
                     RxState = RXSTATE_IDLE;
                     RxIndex = 0;
@@ -138,9 +140,10 @@ static Byte RxPacket[RXPKTSIZE];
         NSData *bytesData = [NSData dataWithBytes:&RxPacket[0] length:RxIndex-1];
         LogError(@"** No Packet found for maximum buffer length.  Byte Data: %@  Parse State: %i.  Character: %x",
                    bytesData, (int)RxState, c);
+        /*
         if ( self.logPackets ) {
             [[SSPacketLogger packetLogger] logPacket:[NSString stringWithFormat:@"\nNo Packet found for maximum buffer length!  Byte Data: %@  Parse State: %i.  Character: %x", bytesData, (int)RxState, c]];
-        }
+        }*/
         RxState = RXSTATE_IDLE;
         RxIndex = 0;
     }
@@ -149,11 +152,12 @@ static Byte RxPacket[RXPKTSIZE];
 -(void) processPDIPacket:(Byte*)bytes length:(int)length {
     @try {
         // for debugging
+        /*
         if ( self.logPackets ) {
             NSData *bytesData = [NSData dataWithBytes:bytes length:length];
             //Log(@"** Received Packet:\n%@.  size: %i", bytesData, length);
             [[SSPacketLogger packetLogger] logPacket:[NSString stringWithFormat:@"** PACKET: %@\n", bytesData]];
-        }
+        }*/
         
         Byte cmd = bytes[0];
         switch (cmd ) {

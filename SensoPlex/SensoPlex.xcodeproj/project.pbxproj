@@ -262,7 +262,7 @@
 				ORGANIZATIONNAME = SweetSpotScience;
 				TargetAttributes = {
 					3FE24C5917EB403900BAA87A = {
-						DevelopmentTeam = SXTFNZU3H8;
+						DevelopmentTeam = R83JF9JE9F;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -481,8 +481,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SensoPlex/SensoPlex-Prefix.pch";
 				INFOPLIST_FILE = "SensoPlex/SensoPlex-Info.plist";
